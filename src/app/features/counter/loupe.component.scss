@@ -1,0 +1,112 @@
+:host {
+  position: relative;
+  display: block;
+  width: var(--loupe-size);
+  aspect-ratio: 1;
+  container-type: inline-size;
+}
+
+.ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  pointer-events: none;
+
+  circle {
+    fill: none;
+    stroke-width: 2.6;
+  }
+
+  .track {
+    stroke: rgb(255 255 255 / 0.1);
+  }
+
+  .arc {
+    stroke: var(--accent);
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 3px var(--accent-glow));
+    transition: stroke-dashoffset 0.45s var(--ease-out);
+  }
+}
+
+.lens {
+  --zoom: 2.1;
+  position: absolute;
+  inset: 5.5%;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--text);
+  box-shadow:
+    0 28px 60px rgb(0 0 0 / 0.55),
+    0 0 0 1px rgb(255 255 255 / 0.12),
+    0 0 46px var(--accent-soft);
+  transition: transform 0.3s var(--spring);
+  touch-action: manipulation;
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.lens-art {
+  position: absolute;
+  top: calc(var(--ly, 0px) * -1);
+  left: calc(var(--lx, 0px) * -1);
+  width: var(--vw, 100vw);
+  height: var(--vh, 100vh);
+  background: var(--art);
+  transform-origin: calc(var(--lx, 0px) + var(--ls, 0px) / 2) calc(var(--ly, 0px) + var(--ls, 0px) / 2);
+  transform: scale(var(--zoom));
+  pointer-events: none;
+
+  &.pulse {
+    animation: lens-pulse 0.45s var(--spring);
+  }
+}
+
+@keyframes lens-pulse {
+  35% {
+    transform: scale(calc(var(--zoom) + 0.22));
+  }
+}
+
+.optic {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 24%, rgb(255 255 255 / 0.32) 0%, rgb(255 255 255 / 0.06) 18%, transparent 34%),
+    radial-gradient(circle at 70% 82%, rgb(255 255 255 / 0.1) 0%, transparent 22%),
+    radial-gradient(circle at 50% 50%, rgb(0 0 0 / 0.18) 0%, rgb(0 0 0 / 0.05) 48%, rgb(0 0 0 / 0.45) 100%);
+  box-shadow:
+    inset 0 0 0 2px rgb(255 255 255 / 0.28),
+    inset 0 -14px 32px rgb(0 0 0 / 0.4),
+    inset 0 10px 26px rgb(255 255 255 / 0.12);
+  pointer-events: none;
+}
+
+.content {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2cqi;
+  font-family: var(--font-display);
+  font-size: calc(21cqi * var(--scale, 1));
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  text-shadow:
+    0 2px 14px rgb(0 0 0 / 0.55),
+    0 0 2px rgb(0 0 0 / 0.4);
+  pointer-events: none;
+}

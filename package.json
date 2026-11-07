@@ -1,0 +1,53 @@
+{
+  "name": "free-counter",
+  "version": "1.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "start:lan": "ng serve --host 0.0.0.0 --port 4200",
+    "build": "ng build",
+    "build:web": "ng build --base-href /FreeCounter/",
+    "watch": "ng build --watch --configuration development",
+    "android:sync": "ng build && cap sync android",
+    "android:open": "cap open android",
+    "android:run": "ng build && cap sync android && cap run android",
+    "assets": "capacitor-assets generate --android --iconBackgroundColor #120f24 --splashBackgroundColor #101218"
+  },
+  "private": true,
+  "packageManager": "npm@11.19.1",
+  "dependencies": {
+    "@angular/common": "^22.2.0",
+    "@angular/compiler": "^22.2.0",
+    "@angular/core": "^22.2.0",
+    "@angular/forms": "^22.2.0",
+    "@angular/platform-browser": "^22.2.0",
+    "@angular/service-worker": "^22.2.5",
+    "@capacitor-community/admob": "^8.3.0",
+    "@capacitor-community/keep-awake": "^8.0.1",
+    "@capacitor-community/text-to-speech": "^8.0.2",
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/browser": "^8.0.5",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/local-notifications": "^8.3.1",
+    "@capacitor/preferences": "^8.0.1",
+    "@capacitor/splash-screen": "^8.0.2",
+    "@fontsource-variable/manrope": "^5.3.0",
+    "@fontsource-variable/unbounded": "^5.3.0",
+    "capacitor-native-settings": "^8.2.0",
+    "cordova-plugin-purchase": "^13.20.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^22.2.6",
+    "@angular/cli": "^22.2.6",
+    "@angular/compiler-cli": "^22.2.0",
+    "@capacitor/assets": "^4.0.0",
+    "@capacitor/cli": "^8.6.0",
+    "@phosphor-icons/core": "^2.1.1",
+    "prettier": "^3.8.1",
+    "typescript": "~6.0.2"
+  }
+}

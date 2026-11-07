@@ -1,0 +1,126 @@
+<div class="pane-scroll">
+  <div class="pane-inner">
+    <h1 class="pane-title">{{ 'settings.title' | t }}</h1>
+
+    @if (showDonate) {
+      <app-donate />
+    }
+
+    <div class="columns">
+      <section>
+        <div class="row">
+          <app-icon name="sound" />
+          <span class="text">{{ 'settings.sound' | t }}</span>
+          <app-toggle [checked]="s().sound.enabled" (checkedChange)="setSound($event)" [label]="'settings.sound' | t" />
+        </div>
+        <div class="row" [class.off]="!s().sound.enabled">
+          <app-icon name="tap" />
+          <span class="text">{{ 'settings.soundTap' | t }}</span>
+          <app-toggle
+            [checked]="s().sound.onTap"
+            [disabled]="!s().sound.enabled"
+            (checkedChange)="setTapSound($event)"
+            [label]="'settings.soundTap' | t"
+          />
+        </div>
+        <div class="row" [class.off]="!s().sound.enabled">
+          <app-icon name="music" />
+          <span class="text">
+            {{ 'settings.alert' | t }}
+            <small>{{ (s().sound.alert === 'system' ? 'settings.alertSystemHint' : 'settings.alertThemeHint') | t }}</small>
+          </span>
+          <div class="langs">
+            <button type="button" class="lang" [class.on]="s().sound.alert === 'theme'" (click)="setAlert('theme')">
+              {{ 'settings.alertTheme' | t }}
+            </button>
+            <button type="button" class="lang" [class.on]="s().sound.alert === 'system'" (click)="setAlert('system')">
+              {{ 'settings.alertSystem' | t }}
+            </button>
+          </div>
+        </div>
+        @if (native && s().sound.enabled && s().sound.alert === 'system') {
+          <div class="warn">
+            <span>{{ 'settings.alertPickHint' | t }}</span>
+            <button type="button" class="btn small accent" (click)="permissions.openNotificationSettings()">
+              {{ 'settings.alertPick' | t }}
+            </button>
+          </div>
+        }
+        <div class="row volume" [class.off]="!s().sound.enabled">
+          <span class="text">{{ 'settings.volume' | t }}</span>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            step="5"
+            [value]="volumePercent()"
+            [disabled]="!s().sound.enabled"
+            [style.--fill]="volumePercent() + '%'"
+            [attr.aria-label]="'settings.volume' | t"
+            (input)="setVolume($event)"
+            (change)="previewVolume()"
+          />
+        </div>
+        <div class="row">
+          <app-icon name="vibrate" />
+          <span class="text">{{ 'settings.haptics' | t }}</span>
+          <app-toggle [checked]="s().haptics" (checkedChange)="store.update({ haptics: $event })" [label]="'settings.haptics' | t" />
+        </div>
+        <div class="row">
+          <app-icon name="sun" />
+          <span class="text">{{ 'settings.keepAwake' | t }}</span>
+          <app-toggle [checked]="s().keepAwake" (checkedChange)="store.update({ keepAwake: $event })" [label]="'settings.keepAwake' | t" />
+        </div>
+      </section>
+
+      <section>
+        <div class="row">
+          <app-icon name="bell" />
+          <span class="text">
+            {{ 'settings.notifications' | t }}
+            <small>{{ 'settings.notificationsHint' | t }}</small>
+          </span>
+          <app-toggle [checked]="s().notifications" (checkedChange)="setNotifications($event)" [label]="'settings.notifications' | t" />
+        </div>
+        @if (notificationsBlocked()) {
+          <div class="warn">
+            <span>{{ 'settings.permBlocked' | t }}</span>
+            <button type="button" class="btn small accent" (click)="permissions.openNotificationSettings()">{{ 'settings.open' | t }}</button>
+          </div>
+        }
+        @if (exactAlarmsOff()) {
+          <div class="warn">
+            <span>{{ 'settings.permExact' | t }}</span>
+            <button type="button" class="btn small accent" (click)="permissions.openExactAlarmSettings()">{{ 'settings.open' | t }}</button>
+          </div>
+        }
+        <div class="row">
+          <app-icon name="globe" />
+          <span class="text">{{ 'settings.language' | t }}</span>
+          <div class="langs">
+            @for (lang of languages; track lang.id) {
+              <button type="button" class="lang" [class.on]="s().language === lang.id" (click)="store.update({ language: lang.id })">
+                {{ lang.label }}
+              </button>
+            }
+          </div>
+        </div>
+        <button type="button" class="row link" (click)="ui.openSheet('contact')">
+          <app-icon name="mail" />
+          <span class="text">{{ 'settings.contact' | t }}</span>
+        </button>
+        <button type="button" class="row link" (click)="ui.openSheet('privacy')">
+          <app-icon name="shield" />
+          <span class="text">{{ 'settings.privacy' | t }}</span>
+        </button>
+        @if (ads.consentAvailable) {
+          <button type="button" class="row link" (click)="ads.showConsentForm()">
+            <app-icon name="shield" />
+            <span class="text">{{ 'settings.adsConsent' | t }}</span>
+          </button>
+        }
+        <p class="version">FreeCounter · {{ 'settings.version' | t: { value: version } }}</p>
+      </section>
+    </div>
+  </div>
+</div>

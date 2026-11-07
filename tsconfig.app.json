@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["cordova-plugin-purchase"]
+  },
+  "include": ["src/**/*.ts"]
+}

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#2a1f5c"/>
+      <stop offset="60%" stop-color="#120f24"/>
+      <stop offset="100%" stop-color="#0a0914"/>
+    </radialGradient>
+    <linearGradient id="disk" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8f7bff"/>
+      <stop offset="100%" stop-color="#3f37e8"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#b57bff"/>
+      <stop offset="100%" stop-color="#4fa8ff"/>
+    </linearGradient>
+    <radialGradient id="shine" cx="35%" cy="25%" r="60%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.35"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="28"/>
+    </filter>
+  </defs>
+  <g id="mark">
+    <circle cx="512" cy="512" r="250" fill="#6c5cff" opacity="0.55" filter="url(#glow)"/>
+    <circle cx="512" cy="512" r="300" fill="none" stroke="url(#ring)" stroke-width="22" stroke-linecap="round" stroke-dasharray="1400 485" transform="rotate(-90 512 512)"/>
+    <circle cx="512" cy="512" r="240" fill="url(#disk)"/>
+    <circle cx="512" cy="512" r="240" fill="url(#shine)"/>
+    <path d="M512 400v224M400 512h224" stroke="#fff" stroke-width="56" stroke-linecap="round"/>
+  </g>
+</svg>

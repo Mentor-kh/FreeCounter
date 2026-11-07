@@ -1,0 +1,44 @@
+<app-backdrop />
+
+<main #pagerHost class="pager" (scroll)="onScroll()">
+  <section class="pane" [attr.aria-label]="'pane.looks' | t">
+    @defer (on idle) {
+      <app-looks-pane />
+    }
+  </section>
+  <section class="pane" [attr.aria-label]="'pane.counter' | t">
+    <app-counter-pane />
+  </section>
+  <section class="pane" [attr.aria-label]="'pane.settings' | t">
+    @defer (on idle) {
+      <app-settings-pane />
+    }
+  </section>
+</main>
+
+<nav class="dots" aria-label="Pages">
+  @for (pane of panes; track pane) {
+    <button
+      type="button"
+      class="dot"
+      [class.on]="pager.pane() === pane"
+      [attr.aria-label]="paneLabels[pane] | t"
+      [attr.aria-current]="pager.pane() === pane ? 'page' : null"
+      (click)="pager.goTo(pane)"
+    ></button>
+  }
+</nav>
+
+@switch (ui.sheet()) {
+  @case ('goal') {
+    <app-goal-sheet />
+  }
+  @case ('privacy') {
+    <app-privacy-sheet />
+  }
+  @case ('contact') {
+    <app-contact-sheet />
+  }
+}
+
+<app-overlays />

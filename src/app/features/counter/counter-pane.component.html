@@ -1,0 +1,162 @@
+<div class="layout">
+  <header class="top">
+    <div class="voice-slot">
+      <button
+        #hold="appLongPress"
+        type="button"
+        class="ghost"
+        appLongPress
+        [class.on]="voice.enabled()"
+        [attr.aria-label]="'voice.toggle' | t"
+        [attr.aria-pressed]="voice.enabled()"
+        [attr.title]="'voice.stepHint' | t"
+        (longPress)="openVoiceMenu()"
+        (click)="hold.consumed() || toggleVoice()"
+      >
+        <app-icon [name]="voice.enabled() ? 'voice' : 'voice-off'" [size]="22" />
+        <span class="step-badge">{{ voice.step() }}</span>
+      </button>
+      @if (voiceMenu()) {
+        <div class="menu-scrim" (click)="voiceMenu.set(false)"></div>
+        <div class="voice-menu glass" role="menu" [attr.aria-label]="'voice.step' | t">
+          <span class="menu-title">{{ 'voice.step' | t }}</span>
+          @for (option of stepOptions; track option.step) {
+            <button type="button" role="menuitemradio" [attr.aria-checked]="voice.step() === option.step" [class.on]="voice.step() === option.step" (click)="pickStep(option.step)">
+              <b>{{ option.step }}</b>
+              <span>{{ option.label | t }}</span>
+              @if (voice.step() === option.step) {
+                <app-icon name="check" [size]="18" />
+              }
+            </button>
+          }
+        </div>
+      }
+    </div>
+    <button type="button" class="chip mode" [attr.aria-label]="'mode.switch' | t" (click)="cycleMode()">
+      <app-icon [name]="modeIcon()" [size]="22" />
+      <span class="mode-label">{{ modeLabel() | t }}</span>
+      <span class="mode-dots" aria-hidden="true">
+        @for (m of modes; track m) {
+          <i [class.on]="m === mode()"></i>
+        }
+      </span>
+      @if (backgroundRunning()) {
+        <span class="live" aria-hidden="true"></span>
+      }
+    </button>
+    <button type="button" class="ghost" [attr.aria-label]="'voice.gender' | t" (click)="toggleGender()">
+      <app-icon [name]="voice.gender() === 'male' ? 'voice-male' : 'voice-female'" [size]="22" />
+    </button>
+  </header>
+
+  <div class="stage">
+    @let v = view();
+    <app-loupe [progress]="v.progress" [scale]="scale()" [label]="v.value" (pressed)="onLoupe()">
+      <span class="value">
+        {{ v.value }}
+        @if (v.fraction; as fraction) {
+          <small>{{ fraction }}</small>
+        }
+      </span>
+      @if (v.caption; as caption) {
+        <span class="caption">{{ caption }}</span>
+      }
+    </app-loupe>
+  </div>
+
+  <div class="controls">
+    @switch (mode()) {
+      @case ('tap') {
+        <div class="row">
+          <button
+            type="button"
+            class="round"
+            [disabled]="tap().undoStack.length === 0"
+            [attr.aria-label]="'counter.undo' | t"
+            (click)="undo()"
+          >
+            <app-icon name="undo" [size]="26" />
+          </button>
+          <button
+            type="button"
+            class="round dir"
+            [class.down]="tap().direction === 'down'"
+            [attr.aria-label]="(tap().direction === 'up' ? 'counter.up' : 'counter.down') | t"
+            (click)="toggleDirection()"
+          >
+            <app-icon name="up" [size]="30" />
+          </button>
+          <button type="button" class="chip goal" [attr.aria-label]="'counter.goal' | t" (click)="ui.openSheet('goal')">
+            <app-icon name="goal" [size]="20" />
+            @if (tap().goal; as goal) {
+              {{ formatValue(goal) }}
+            } @else {
+              <span class="muted">—</span>
+            }
+          </button>
+          <button
+            type="button"
+            class="round"
+            [disabled]="tap().value === tap().start"
+            [attr.aria-label]="'counter.reset' | t"
+            (click)="reset()"
+          >
+            <app-icon name="reset" [size]="26" />
+          </button>
+        </div>
+      }
+      @case ('stopwatch') {
+        <div class="row">
+          <button type="button" class="round" [disabled]="!store.stopwatchRunning()" [attr.aria-label]="'counter.lap' | t" (click)="lap()">
+            <app-icon name="lap" [size]="26" />
+          </button>
+          <div class="lap-info" aria-live="polite">
+            @if (lastLap(); as last) {
+              <span>{{ 'counter.lapN' | t: { value: last.index } }}</span>
+              <b>{{ formatLap(last.splitMs) }}</b>
+            }
+          </div>
+          <button type="button" class="round" [attr.aria-label]="'counter.reset' | t" (click)="reset()">
+            <app-icon name="reset" [size]="26" />
+          </button>
+        </div>
+      }
+      @case ('timer') {
+        <div class="row">
+          <div class="wheels">
+            <app-wheel
+              [value]="timerParts().h"
+              [max]="23"
+              [unit]="'duration.hours' | t"
+              [label]="'duration.hours' | t"
+              [disabled]="timerLocked()"
+              (ticked)="tick()"
+              (changed)="setPart('h', $event)"
+            />
+            <app-wheel
+              [value]="timerParts().m"
+              [max]="59"
+              [unit]="'duration.mins' | t"
+              [label]="'duration.mins' | t"
+              [disabled]="timerLocked()"
+              (ticked)="tick()"
+              (changed)="setPart('m', $event)"
+            />
+            <app-wheel
+              [value]="timerParts().s"
+              [max]="59"
+              [unit]="'duration.secs' | t"
+              [label]="'duration.secs' | t"
+              [disabled]="timerLocked()"
+              (ticked)="tick()"
+              (changed)="setPart('s', $event)"
+            />
+          </div>
+          <button type="button" class="round" [attr.aria-label]="'counter.reset' | t" (click)="reset()">
+            <app-icon name="reset" [size]="26" />
+          </button>
+        </div>
+      }
+    }
+  </div>
+</div>

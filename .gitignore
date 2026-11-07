@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.angular/
+.playwright-mcp/
+*.log
+.DS_Store
+Thumbs.db
+android/app/build/
+android/build/
+android/.gradle/
+android/local.properties
+android/app/release/
+*.jks
+*.keystore
+design/
+image.png
+task.md

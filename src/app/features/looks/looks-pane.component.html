@@ -1,0 +1,97 @@
+<div class="pane-scroll">
+  <div class="pane-inner">
+    <h1 class="pane-title">{{ 'looks.title' | t }}</h1>
+
+    <section>
+      <h2 class="group-title">{{ 'looks.yourColor' | t }}</h2>
+      <p class="group-hint">{{ 'looks.yourColorHint' | t }}</p>
+      <div class="swatches">
+        @for (color of presets; track color) {
+          <button
+            type="button"
+            class="swatch"
+            [class.on]="isAccent(color)"
+            [style.--swatch]="color"
+            [attr.aria-label]="color"
+            (click)="theme.setAccent(color)"
+          ></button>
+        }
+        <label class="swatch tool" [class.on]="customActive() && !presets.includes(theme.accent())" [attr.aria-label]="'looks.pick' | t">
+          <app-icon name="eyedropper" [size]="22" />
+          <input type="color" [value]="theme.accent()" (input)="pickColor($event)" />
+        </label>
+        <button type="button" class="swatch tool" appRipple [attr.aria-label]="'looks.random' | t" (click)="theme.randomize()">
+          <app-icon name="dice" [size]="24" />
+        </button>
+      </div>
+    </section>
+
+    @if (!purchases.packOwned()) {
+      <section class="pack">
+        <div class="fan" aria-hidden="true">
+          @for (thumb of packThumbs; track thumb; let i = $index) {
+            <img [src]="thumb" alt="" [style.--i]="i - 2" loading="lazy" />
+          }
+        </div>
+        <div class="pack-text">
+          <h2>{{ 'looks.packTitle' | t }}</h2>
+          <p>{{ 'looks.packSubtitle' | t }}</p>
+          @if (purchases.promoActive()) {
+            <p class="promo">
+              <app-icon name="sparkle" [size]="16" />
+              {{ 'looks.packPromo' | t: { date: promoDate() } }} · {{ 'looks.endsIn' | t: { value: countdown() } }}
+            </p>
+          }
+          <div class="pack-buy">
+            <button
+              type="button"
+              class="btn accent"
+              appRipple
+              [disabled]="purchases.busy() !== null"
+              (click)="buy(purchases.packProductId(), null)"
+            >
+              {{ 'looks.getPack' | t: { price: purchases.price(purchases.packProductId()) } }}
+            </button>
+            @if (purchases.promoActive()) {
+              <s>{{ purchases.price('pack_starter') }}</s>
+            }
+          </div>
+        </div>
+      </section>
+    }
+
+    <section>
+      <h2 class="group-title">{{ 'looks.authored' | t }}</h2>
+      <p class="group-hint">{{ authoredHint() | t }}</p>
+      <div class="grid">
+        @for (card of cards(); track card.theme.id) {
+          <article
+            class="card"
+            [class.active]="card.active"
+            [style.--card-accent]="card.theme.accent"
+            (click)="tapCard(card)"
+          >
+            <img class="thumb" [src]="card.theme.thumb" alt="" loading="lazy" />
+            <span class="mini-lens" aria-hidden="true" [style.background-image]="'url(' + card.theme.thumb + ')'"></span>
+            @if (card.inPack && !card.owned) {
+              <span class="badge">{{ 'looks.inPack' | t }}</span>
+            }
+            <div class="card-info">
+              <span class="card-name">{{ card.nameKey | t }}</span>
+              @if (card.active) {
+                <span class="state on"><app-icon name="check" [size]="18" />{{ 'looks.active' | t }}</span>
+              } @else if (card.owned) {
+                <span class="state">{{ 'looks.owned' | t }}</span>
+              } @else if (card.productId; as productId) {
+                <span class="price" [class.busy]="purchases.busy() === productId">
+                  <app-icon name="lock" [size]="14" />
+                  {{ purchases.price(productId) }}
+                </span>
+              }
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+  </div>
+</div>
